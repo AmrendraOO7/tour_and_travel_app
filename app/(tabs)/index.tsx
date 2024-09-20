@@ -1,10 +1,15 @@
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useState } from 'react'
 import { Stack } from 'expo-router'
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '@/content/colors'
 import { useHeaderHeight } from '@react-navigation/elements'
+import CategoryButtons from '../../components/CategoryButtons'
+import Listing from '@/components/Listing'
+import listingData from '@/data/destinations.json';
+import GroupListings from '@/components/GroupListing';
+import groupData from '@/data/groups.json'
 
 const styles = StyleSheet.create({
     container: {
@@ -38,8 +43,6 @@ const styles = StyleSheet.create({
         marginLeft: 20
     }
 })
-
-
 
 const headder = {
     headerTransparent: true,
@@ -81,25 +84,45 @@ const Page = () => {
         }
     ]
 
+    const [category, setCategory] = useState('All');
+
+    const onCatChanged = (category: string) => {
+        console.log('Category:', category)
+        setCategory(category);
+    }
+
     return (
         <>
             <Stack.Screen options={headder} />
             <View style={headderStyles}>
-                <Text style={styles.headdingText}>Explore the Beautiful world!</Text>
+                <ScrollView showsHorizontalScrollIndicator={false}>
+                    <Text style={styles.headdingText}>Explore the Beautiful world!</Text>
 
-                {/* Search area and menu button */}
-                <View style={styles.searchSectionWrapper}>
-                    <View style={styles.searchBar}>
-                        <Ionicons name='search' size={18} style={{ marginRight: 5 }} color={colors.black} />
-                        <TextInput placeholder='Search...'></TextInput>
+                    {/* Search area and menu button */}
+                    <View style={styles.searchSectionWrapper}>
+                        <View style={styles.searchBar}>
+                            <Ionicons name='search' size={18} style={{ marginRight: 5 }} color={colors.black} />
+                            <TextInput placeholder='Search...'></TextInput>
+                        </View>
+                        <GestureHandlerRootView>
+                            <TouchableOpacity onPress={() => { }} style={styles.filterButton}>
+                                <Ionicons name='options' size={28} color={colors.white} />
+                            </TouchableOpacity>
+                        </GestureHandlerRootView>
                     </View>
-                    <GestureHandlerRootView>
-                        <TouchableOpacity onPress={() => { }} style={styles.filterButton}>
-                            <Ionicons name='options' size={28} color={colors.white} />
-                        </TouchableOpacity>
-                    </GestureHandlerRootView>
-                </View>
+
+                    {/* Category section */}
+                    <CategoryButtons onCategoryChanged={onCatChanged} />
+
+                    {/* listing categories */}
+                    <Listing listings={listingData} category={category} />
+
+                    {/* Group listings */}
+                    <GroupListings listings={groupData} />
+                </ScrollView>
             </View>
+
+
         </>
     )
 }
